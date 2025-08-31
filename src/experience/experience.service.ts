@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateExperienceDto } from './dto/create-experience.dto';
 import { UpdateExperienceDto } from './dto/update-experience.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -13,33 +13,21 @@ export class ExperienceService {
     @InjectModel(User.name) private userModel: Model<UserDocument>, // inject user model
   ) {}
 
-  // ✅ create experience and add to user
+  // CREATE EXPERIENCE TO USER
   async create(createExperienceDto: CreateExperienceDto) {
-    const experience = new this.experienceModel({
-      title: createExperienceDto.title,
-      place: createExperienceDto.place,
-      startDate: createExperienceDto.startDate,
-      endDate: createExperienceDto.endDate,
-      type: createExperienceDto.type,
-      keyFeautures: createExperienceDto.keyFeautures,
-      user: createExperienceDto.userId, 
-    });
-
-    const savedExp = await experience.save();
-    //console.log('user id', createExperienceDto.userId);
-    
-  const updatedUser = await this.userModel.findByIdAndUpdate(
-  createExperienceDto.userId,
-  { $push: { experiences: savedExp._id } },
-  { new: true } 
-);
-
-//onsole.log('Updated user:', updatedUser);
-
-
-    return savedExp;
+  const updatedUser = await this.userModel.findById(createExperienceDto.userId);
+  if(!updatedUser){
+    throw new NotFoundException('User not found');
+  }
+  const experience = new this.experienceModel(createExperienceDto);  
+  experience.save();
+  updatedUser.experiences.push(experience._id )
+  const savedExp = await updatedUser.save();
+  return savedExp;
   }
 
+
+  //FIND ALL USERS
   findAll() {
     return this.experienceModel.find().exec();
   }

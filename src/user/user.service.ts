@@ -12,7 +12,6 @@ export class UserService {
     async creatUser (creatUserDto : CreateUserDto){
         const user = await new this.UserModel(creatUserDto);
         return user.save();
-
     }
 
     //findall users
@@ -24,6 +23,6 @@ export class UserService {
     //Get user by id
 
     async getUserById(id:string){
-        return await this.UserModel.findById(id).populate('experiences').exec();
+        return await this.UserModel.findById(id).populate('skills').exec()
     }
 }

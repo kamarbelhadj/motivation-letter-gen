@@ -28,7 +28,10 @@ export class User{
     position:Position
 
    @Prop({ type: [{ type: Types.ObjectId, ref: 'Experience' }] })
-experiences: Types.ObjectId[];
+   experiences: Types.ObjectId[];
+
+   @Prop({ type: [{ type: Types.ObjectId, ref: 'Skill' }] })
+   skills: Types.ObjectId[];
 
 }
 export const UserSchema = SchemaFactory.createForClass(User)
