@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { User, UserDocument } from './schemas/user.schema';
+import { User, UserDocument } from './schema/user.schema';
 import { Model } from 'mongoose';
 import { CreateUserDto } from './dto/createUser.dto';
 
@@ -24,6 +24,6 @@ export class UserService {
     //Get user by id
 
     async getUserById(id:string){
-        return await this.UserModel.findById(id);
+        return await this.UserModel.findById(id).populate('experiences').exec();
     }
 }
